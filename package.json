@@ -10,7 +10,7 @@
 	"devDependencies": {},
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
-		"app": "concurrently \"cd server & node app.js\" \"cd client & npm run serve\""
+		"app": "concurrently \"cd server & nodemon app.js\" \"cd client & npm run serve\""
 	},
 	"author": "Boris Grabovac",
 	"license": "ISC"
