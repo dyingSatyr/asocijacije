@@ -1,13 +1,16 @@
 <template>
   <div>
     <h1>Play</h1>
-    <div v-if="!matchmaking">
-      <button id="play" @click="startMatchmaking">Play</button>
+    <div v-if="!game">
+      <div v-if="!matchmaking">
+        <button id="play" @click="startMatchmaking">Play</button>
+      </div>
+      <div v-else>
+        <p>Searching for opponent.</p>
+        <button @click="cancelMatchmaking">Cancel</button>
+      </div>
     </div>
-    <div v-else>
-      <p>Searching for opponent.</p>
-      <button @click="cancelMatchmaking">Cancel</button>
-    </div>
+    <div id="game" v-else>Gameeeeeeeee</div>
   </div>
 </template>
 
@@ -32,11 +35,16 @@ export default {
         this.matchmaking = false;
         console.log(data.message);
       }
+    },
+    gameInit: function(data) {
+      this.game = true;
+      console.log(data.message);
     }
   },
   data: function() {
     return {
-      matchmaking: false
+      matchmaking: false,
+      game: false
     };
   },
   methods: {

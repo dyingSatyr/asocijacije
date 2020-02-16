@@ -1,8 +1,8 @@
 <template>
   <div id="app">
     <Login msg="Socket.io test" />
-    <ServerMessages />
     <MatchMaking />
+    <ServerMessages />
   </div>
 </template>
 

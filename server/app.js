@@ -3,6 +3,20 @@ require('dotenv').config()
 const app = express()
 const port = process.env.PORT || 5000
 
+// Fire up the server
+const server = app.listen(
+	port,
+	console.log(`Server is now running on port: ${port}.`)
+)
+
+// Fire up socket.io on express server
+const io = require('socket.io')(server)
+
+// Create an endpoint for the server
+app.get('/', (req, res) => {
+	res.send(`Game server is up and running.`)
+})
+
 // Add server status info
 const StatusInfo = require('./controllers/StatusInfo')
 let statusInfo = new StatusInfo()
@@ -13,7 +27,7 @@ let players = new Players()
 
 // Add matchmaking controller
 const MatchMaking = require('./controllers/MatchMaking')
-let matchmaking = new MatchMaking()
+let matchmaking = new MatchMaking(io)
 
 // Add dummy users
 let dummyUsers = [
@@ -34,20 +48,6 @@ let dummyUsers = [
 		password: 'user4'
 	}
 ]
-
-// Fire up the server
-const server = app.listen(
-	port,
-	console.log(`Server is now running on port: ${port}.`)
-)
-
-// Fire up socket.io on express server
-const io = require('socket.io')(server)
-
-// Create an endpoint for the server
-app.get('/', (req, res) => {
-	res.send(`Game server is up and running.`)
-})
 
 io.on('connection', socket => {
 	/**
@@ -152,6 +152,9 @@ io.on('connection', socket => {
 				message: 'You are now matchmaking.'
 			})
 		}
+
+		//Start machmaking algorith
+		matchmaking.matchmake()
 		// Broadcast new status
 		broadcastServerInfo()
 	})
@@ -181,3 +184,23 @@ const broadcastServerInfo = () => {
 		playersMatchmaking: matchmaking.playersCurrentlyMatchmaking
 	})
 }
+
+/**
+ * Check if matched pairs exist and send approval request
+ */
+// setInterval(startGame, 5000)
+
+// function startGame() {
+// 	let pairs = matchmaking.matchedPairs
+// 	if (pairs.length > 0) {
+// 		pairs.forEach(pair => {
+// 			console.log('Pair found. Initializing new game.')
+// 			new Game(pair, uuidv1())
+// 			//Remove pair from matched pair
+// 			matchmaking.removeMatchedPair(pair)
+// 		})
+// 	} else {
+// 		console.log('No pairs found.')
+// 		return
+// 	}
+// }
