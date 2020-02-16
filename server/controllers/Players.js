@@ -20,6 +20,14 @@ class Players {
 	get playersCount() {
 		return this.players.length
 	}
+
+	getPlayerById(socketId) {
+		let result = this.players.find(player => {
+			return player.socketId === socketId
+		})
+		console.log(result)
+		return result
+	}
 }
 
 module.exports = Players

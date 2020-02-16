@@ -1,5 +1,5 @@
 <template>
-  <div class="hello">
+  <div>
     <h1>{{ msg }}</h1>
     <div id="loginform" v-if="!loggedIn">
       <input type="text" name="username" v-model="username" id="username" />
@@ -23,13 +23,15 @@ export default {
     loginResponse: function(data) {
       if (!data.error) {
         this.loggedIn = true;
+        console.log(data.message);
       } else {
-        this.errorMessage = data.message;
+        console.log(data.message);
       }
     },
     logoutResponse: function(data) {
       if (!data.error) {
         this.loggedIn = false;
+        console.log(data.message);
       }
     }
   },
@@ -40,8 +42,7 @@ export default {
     return {
       username: "",
       password: "",
-      loggedIn: false,
-      errorMessage: ""
+      loggedIn: false
     };
   },
   methods: {

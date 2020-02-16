@@ -11,6 +11,10 @@ let statusInfo = new StatusInfo()
 const Players = require('./controllers/Players')
 let players = new Players()
 
+// Add matchmaking controller
+const MatchMaking = require('./controllers/MatchMaking')
+let matchmaking = new MatchMaking()
+
 // Add dummy users
 let dummyUsers = [
 	{
@@ -90,7 +94,7 @@ io.on('connection', socket => {
 			// Login success - respond to client
 			socket.emit('loginResponse', {
 				error: false,
-				message: 'Login Successfull',
+				message: 'You are now logged in.',
 				loggedIn: true
 			})
 			console.log(`${credentials.username} has logged in.`)
@@ -125,6 +129,47 @@ io.on('connection', socket => {
 		//Broadcast new server status
 		broadcastServerInfo()
 	})
+
+	/**
+	 *  ON PLAY / MATCHMAKE
+	 */
+
+	socket.on('startMatchmaking', () => {
+		// Fetch the user from online users list
+		let player = players.getPlayerById(socket.id)
+
+		if (!player) {
+			socket.emit('startMatchmakingResponse', {
+				error: true,
+				message: 'You are not logged in.'
+			})
+		} else {
+			// Add player to matchmaking list
+			matchmaking.addPlayerToMatchmaking(player)
+			// Respond to player that matchmaking begun
+			socket.emit('startMatchmakingResponse', {
+				error: false,
+				message: 'You are now matchmaking.'
+			})
+		}
+		// Broadcast new status
+		broadcastServerInfo()
+	})
+
+	/**
+	 *  CANCEL MATCHMAKE
+	 */
+	socket.on('cancelMatchmaking', () => {
+		// Remove player from matchmaking list
+		matchmaking.removePlayerFromMatchmaking(socket.id)
+		// Broadcast new status
+		broadcastServerInfo()
+		// Send response to client
+		socket.emit('cancelMatchmakingResponse', {
+			erorr: false,
+			message: 'You are no longer matchmaking.'
+		})
+	})
 })
 
 // Broadcast server info
@@ -132,6 +177,7 @@ const broadcastServerInfo = () => {
 	io.sockets.emit('broadcast', {
 		connectedSockets: statusInfo.onlinePlayersNumber,
 		playersCount: players.playersCount,
-		playersList: players.playersList
+		playersList: players.playersList,
+		playersMatchmaking: matchmaking.playersCurrentlyMatchmaking
 	})
 }
