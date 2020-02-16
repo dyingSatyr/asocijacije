@@ -90,7 +90,8 @@ io.on('connection', socket => {
 			// Login success - respond to client
 			socket.emit('loginResponse', {
 				error: false,
-				message: 'Login Successfull'
+				message: 'Login Successfull',
+				loggedIn: true
 			})
 			console.log(`${credentials.username} has logged in.`)
 			// Add player to players list
@@ -102,17 +103,35 @@ io.on('connection', socket => {
 			// Login failed, respond to client
 			socket.emit('loginResponse', {
 				error: true,
-				message: 'Invalid Credentials'
+				message: 'Invalid Credentials.'
 			})
 			console.log(`${socket.id} tried to login with invalid credentials.`)
 		}
+	})
+
+	/**
+	 *  ON LOGOUT
+	 */
+	socket.on('logout', () => {
+		// Remove player from players list
+		players.removePlayer(socket.id)
+		//Inform server
+		console.log(`Player with id ${socket.id} has logged out.`)
+		//Respond to socket
+		socket.emit('logoutResponse', {
+			error: false,
+			message: 'You have been logged out.'
+		})
+		//Broadcast new server status
+		broadcastServerInfo()
 	})
 })
 
 // Broadcast server info
 const broadcastServerInfo = () => {
 	io.sockets.emit('broadcast', {
-		onlinePlayers: statusInfo.onlinePlayersNumber,
+		connectedSockets: statusInfo.onlinePlayersNumber,
+		playersCount: players.playersCount,
 		playersList: players.playersList
 	})
 }

@@ -16,6 +16,10 @@ class Players {
 	get playersList() {
 		return this.players
 	}
+
+	get playersCount() {
+		return this.players.length
+	}
 }
 
 module.exports = Players
