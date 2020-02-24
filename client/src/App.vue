@@ -3,6 +3,7 @@
     <Login msg="Socket.io test" />
     <MatchMaking />
     <ServerMessages />
+    <GameRoom />
   </div>
 </template>
 
@@ -10,13 +11,15 @@
 import Login from "./components/Login.vue";
 import ServerMessages from "./components/ServerMessages.vue";
 import MatchMaking from "./components/MatchMaking.vue";
+import GameRoom from "./components/GameRoom.vue";
 
 export default {
   name: "App",
   components: {
     Login,
     ServerMessages,
-    MatchMaking
+    MatchMaking,
+    GameRoom
   }
 };
 </script>
