@@ -3,6 +3,7 @@
     <h1>Game room {{roomId}}</h1>
     <p>Opponent: {{opponent.username}}</p>
     <button @click="skockoCombination">Send Combination</button>
+    <p>{{message}}</p>
   </div>
 </template>
 
@@ -24,18 +25,20 @@ export default {
     },
     skockoResult: function(data) {
       console.log(data.message);
+      this.message = data.message;
     }
   },
   data: function() {
     return {
       gameOn: false,
       roomId: null,
-      opponent: null
+      opponent: null,
+      message: ""
     };
   },
   methods: {
     skockoCombination() {
-      this.$socket.emit(this.roomId, {
+      this.$socket.emit("skockoCombination", {
         combination: ["skocko", "tref", "pik", "herc"],
         roomId: this.roomId
       });
